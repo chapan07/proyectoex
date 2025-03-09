@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Alumnos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #e6f2ff;
+            border-bottom: 1px solid #ccc;
+        }
+        .header img {
+            height: 50px;
+        }
+        .header button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .container {
+            width: 50%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #e6f2ff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .profile-container {
+            width: 50%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #cce6ff;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+        }
+        .profile img {
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .profile-info {
+            width: 100%;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="https://academica.cobamich.edu.mx/sicobaem/media/images/logos/logoBlue.svg" alt="Logo">
+        <button onclick="window.location.href='https://chapan07.github.io/2admi/'">Administrativo</button>
+        <button onclick="window.location.href='https://chapan07.github.io/proyecto/'">Proyecto </button>
+    </div>
+    
+    <div class="container" id="loginContainer">
+        <h2>Ingreso de Alumnos</h2>
+        <div class="form-group">
+            <label for="matricula">Matrícula:</label>
+            <input type="text" id="matricula" placeholder="Ingrese su matrícula">
+        </div>
+        <div class="form-group">
+            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fechaNacimiento">
+        </div>
+        <button onclick="login()">Ingresar</button>
+        <div id="error" class="error"></div>
+    </div>
+
+    <div id="profileContainer" class="profile-container">
+        <div class="profile">
+            <img id="profilePic" src="" alt="Foto de perfil" width="100" height="100">
+            <div id="profileInfo" class="profile-info"></div>
+        </div>
+        <button onclick="goBack()">Regresar</button>
+    </div>
+
+    <script>
+        const alumnos = [
+            {
+                matricula: '18993',
+                fechaNacimiento: '1974-07-02',
+                nombre: 'Meza Mendoza Valentin',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1nTqmtj0MNRfAdHrh8PCqDrzzICqjpF-W/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '192001',
+                fechaNacimiento: '1977-01-01',
+                nombre: 'AGUILAR BARRERA ENRIQUE JONATHAN',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1FEp9exF8mlze_TmYItfrGYSrCzvqWCsL/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19021003',
+                fechaNacimiento: '1973-11-02',
+                nombre: 'ALVARADO HERNANDEZ VICTORIA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1s0RLqnWIV87yWgIRmXyLytzfpvB6N90Y/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19021008',
+                fechaNacimiento: '1974-09-15',
+                nombre: 'CABRERA VILLA PORFIRIO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1TaaQrHwUVn84M5p1-Od_gJ9mBFhT9Egl/view?usp=drive_link">Documentos</a>'
+            }, 
+            {
+                matricula: '19021024',
+                fechaNacimiento: '1975-05-18',
+                nombre: 'LEMUS MANDUJANO KARINA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19021028',
+                fechaNacimiento: '1994-08-13',
+                nombre: 'OLVERA ZARCO BRUNO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1mjNDT3lS6JssZuCkhL4aYGDxvmZJ0f7c/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19021052',
+                fechaNacimiento: '2008-03-31',
+                nombre: 'ASTA ORNELAS GABRIELA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1XxsK-wBXWaV9qjh9s0obtO2kyEjaor_O/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '8413197',
+                fechaNacimiento: '1975-05-06',
+                nombre: 'CHAVEZ HERNANDEZ GERARDO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1VicACJC1fNOFejUnENA2W0NvGbBoiios/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19021121',
+                fechaNacimiento: '1975-05-06',
+                nombre: 'JAIME AVILA GEORGINA SEVIGNA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/17QWMXqtcvEfZ-59Zvu84SG2plPf-2dpr/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19021131',
+                fechaNacimiento: '1975-12-01',
+                nombre: 'MANUEL GUTIERREZ PONCIANO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1yrBO-e_5Z1mn3qCmjtGvG2ZLYeixOR55/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19021138',
+                fechaNacimiento: '1978-09-23',
+                nombre: 'TORRES ARREDONDO JUAN JAVIER ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1UAb9zfGKxYQkzoac56i_hqbiOor3SaYj/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19113024',
+                fechaNacimiento: '1973-07-05',
+                nombre: 'LETICIA VILLA PEÑALOSA ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1huxDtlgMW_qRN1aMGtAIdUF9mdtH-nX2/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121010',
+                fechaNacimiento: '2008-03-31',
+                nombre: 'DURAN RODRIGUEZ LUCILA ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1yAjNzRRNy8eYkSUee7g1We22wrA6k7cA/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121020',
+                fechaNacimiento: '1975-03-14',
+                nombre: 'JIMENEZ LOPEZ LAZARO ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1dqqRk-dXA7GeLjQOPnE_p3ps3ce1n-kd/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121022',
+                fechaNacimiento: '1977-01-25',
+                nombre: 'LEAL GALLEGOS CARLOS ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/1VwJQ0pL9uKcHCkatDtS92F4aDUNMwkSf/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121024',
+                fechaNacimiento: '1976-03-14',
+                nombre: 'MENDOZA VILLASEÑOR JAIME EDUARDO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1hIvQJt06McDZTgWAtd1t-NNwoCYrxCHA/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121028',
+                fechaNacimiento: '1966-03-09',
+                nombre: 'PEREA GAONA EDGAR MONARCA HORACIO ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION MECANICA<a href="https://drive.google.com/file/d/1978bO23nPVbDo6Hz7wRYX70jMcZxTNvl/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121035',
+                fechaNacimiento: '1976-09-29',
+                nombre: 'SERVIN GIL ADELFO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1hpnJTwUBHLPgLchd5TEO-TamkDhH2F-C/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121045',
+                fechaNacimiento: '1976-05-26',
+                nombre: 'BRAVO AREVALO EDGAR MANUEL ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1JnGEkz1KHVb6oxjwyhRHaNd00JR1k6NZ/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121046',
+                fechaNacimiento: '1976-07-02',
+                nombre: 'CANCINO GARCIA MONICA ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1bkBf0DXxfqawX12fSIiQI03O2GHpi2aT/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121056',
+                fechaNacimiento: '1976-12-08',
+                nombre: 'GUERRERO MACIEL EDGARDO RENE ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1t4356co5CZWl2JcKLUJTr5LbJl0QcfcH/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121061',
+                fechaNacimiento: '1975-08-19',
+                nombre: 'MENDOZA SARCO SANDRO ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/1ZBS3s966jAf3Iv5WPVfHnz-fIwL7NUEZ/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121070',
+                fechaNacimiento: '1976-12-08',
+                nombre: 'RODRIGUEZ MOLINA FRANCISCO JAVIER ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/11-o9i9HDAbLXkuBbkUGpABbpBuIN_7sJ/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121082',
+                fechaNacimiento: '1976-09-25',
+                nombre: 'CHAVEZ HERNANDEZ MAGNOLIA GISELA ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA Y TECNOLOGIA <a href="https://drive.google.com/file/d/15uFyC__MFwtOK_zJ73-j-86Yz2wg_njv/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121087',
+                fechaNacimiento: '1975-03-04',
+                nombre: 'GONZALES J. CRUZ ',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/1cnS4_IYZbCoSGZLpyVw00uPzLZJUzMev/view?usp=drive_link">Documentos</a>'
+                
+            },
+            {
+                matricula: '1912160',
+                fechaNacimiento: '1976-11-05',
+                nombre: 'MUÑOZ GARCIA LUDMILA FRANCHESCA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA <a href="https://drive.google.com/file/d/1CXpa3tFRNaKkBNwI3NukxVpkFC-0DQ4n/view?usp=drive_link">Documentos</a>'
+                
+            },
+            {
+                matricula: '19121101',
+                fechaNacimiento: '2008-03-31',
+                nombre: 'ORNELAS LOPEZ JUAN MANUEL',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Mnofoto.svg',
+                 info: 'CAPACITACION INFORMATICA <a href="https://drive.google.com/file/d/1r_KpQgIYzf_ttuqp7uLuaJOpxD6Gu6xX/view?usp=drive_link">Documentos</a>'
+                
+            },
+            {
+                matricula: '18021039',
+                fechaNacimiento: '1974-02-04',
+                nombre: 'SAUCEDO CERVANTES MANTÍN',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '18921122',
+                fechaNacimiento: '1974-07-20',
+                nombre: 'ORTEGA GARCIA SURAYA YAMEL',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121007',
+                fechaNacimiento: '1974-08-05',
+                nombre: 'CHÁVEZ LOPEZ PATRIACIA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121008',
+                fechaNacimiento: '1974-10-01',
+                nombre: 'CHÁVEZ MARTINEZ ROSALIA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121014',
+                fechaNacimiento: '1976-09-19',
+                nombre: 'GARCÍA YAÑEZ JESÚS',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121016',
+                fechaNacimiento: '1975-12-30',
+                nombre: 'GUIJOSA RAMIREZ DAVID',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121018',
+                fechaNacimiento: '1976-06-20',
+                nombre: 'GUZMAN SOSA PATRICIA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121023',
+                fechaNacimiento: '1974-08-04',
+                nombre: 'PERALTA ANTONIO LORENZO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121029',
+                fechaNacimiento: '1976-10-12',
+                nombre: 'RICO BARIDAY MARÍA LIZBETH',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121035',
+                fechaNacimiento: '1976-12-08',
+                nombre: 'GONZÁLEZ CARLON MARBELLA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121048',
+                fechaNacimiento: '1976-11-27',
+                nombre: 'CASTILLO ORTÍZ SINDY',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121071',
+                fechaNacimiento: '1976-12-07',
+                nombre: 'SAUCEDO BECERRA MARISELA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '18021039',
+                fechaNacimiento: '1975-12-13',
+                nombre: 'BARAJAS MALDONADO JOSÉ GUILLERMO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121084',
+                fechaNacimiento: '1976-12-07',
+                nombre: 'GARCIA GARCIA ANA MARIA',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121085',
+                fechaNacimiento: '1977-04-29',
+                nombre: 'GARCIA ZEPEDA EDGAR ABRAHAM',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121089',
+                fechaNacimiento: '1970-06-16',
+                nombre: 'GUTIERREZ TOLEDO MARÍA DEL ROSARIO',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121098',
+                fechaNacimiento: '1976-09-24',
+                nombre: 'MENDEZ HURTADO OMAR',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '19121104',
+                fechaNacimiento: '1973-08-30',
+                nombre: 'QUEZADA GARCIA RUBI',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+            {
+                matricula: '1912109',
+                fechaNacimiento: '1976-01-11',
+                nombre: 'TALAVERA DIAZ MARÍA DEL PILAR',
+                foto: 'https://academica.cobamich.edu.mx/sicobaem/assets/images/Fnofoto.svg',
+                 info: 'CAPACITACION CONTABILIDAD <a href="https://drive.google.com/file/d/12g5uuG8qHGFzwZczjUcRI_1wijkSTbWm/view?usp=drive_link">Documentos</a>'
+            },
+          
+
+
+
+        ];
+
+        function login() {
+            const matricula = document.getElementById('matricula').value;
+            const fechaNacimiento = document.getElementById('fechaNacimiento').value;
+            const alumno = alumnos.find(al => al.matricula === matricula && al.fechaNacimiento === fechaNacimiento);
+
+            if (alumno) {
+                document.getElementById('profilePic').src = alumno.foto;
+                document.getElementById('profileInfo').innerHTML = `
+                    <h3>${alumno.nombre}</h3>
+                    <p>${alumno.info}</p>
+                `;
+                document.getElementById('profileContainer').style.display = 'block';
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('error').innerText = '';
+            } else {
+                document.getElementById('error').innerText = 'Datos incorrectos';
+                document.getElementById('profileContainer').style.display = 'none';
+            }
+        }
+
+        function goBack() {
+            document.getElementById('profileContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
